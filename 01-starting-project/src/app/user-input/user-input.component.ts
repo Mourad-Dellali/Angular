@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { datan } from '../data.model';
+import { InvestmentService } from '../investment-service.service';
 
 @Component({
   selector: 'app-user-input',
@@ -10,6 +11,7 @@ import { datan } from '../data.model';
   styleUrl: './user-input.component.css'
 })
 export class UserInputComponent {
+  constructor (private investmentSerivce:InvestmentService) {}
 @Output() calculate = new EventEmitter<datan>();
 enteredData: datan = {
 initialInvestment: 0,
@@ -20,7 +22,7 @@ duration: 10
 
 
 onSubmit() {
-  this.calculate.emit(this.enteredData);
+  this.investmentSerivce.onCalculateInvestmentResults(this.enteredData);
 }
 
 }

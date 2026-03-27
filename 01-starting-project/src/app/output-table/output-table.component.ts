@@ -1,15 +1,21 @@
 import { Component, Input } from '@angular/core';
 import { annualData } from '../annualData.model';
+import { CurrencyPipe } from '@angular/common';
+import { InvestmentService } from '../investment-service.service';
+
 
 @Component({
   selector: 'app-output-table',
   standalone: true,
-  imports: [],
+  imports: [CurrencyPipe],
   templateUrl: './output-table.component.html',
   styleUrl: './output-table.component.css'
 })
 export class OutputTableComponent {
-@Input() outputTable!:annualData[];
+  constructor (private investmentService:InvestmentService) {}
+  get results() {
+    return this.investmentService.resultData;
+  }
 
 
 }
