@@ -5,9 +5,5 @@
 
   <app-auth />
 
-  @if (isAdmin()) {
-    <p> admin</p>
-  }@else {
-    <p>see nothing</p>
-  }
+ <p appAuth userType="admin">Admins</p>
 </main>
