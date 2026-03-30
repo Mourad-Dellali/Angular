@@ -1,4 +1,4 @@
-import { Directive } from "@angular/core";
+import { Directive, input } from "@angular/core";
 @Directive({
     selector: '[appSafeLink]',
     standalone:true,
@@ -7,10 +7,13 @@ import { Directive } from "@angular/core";
     }
 })
 export class SafeLinkDirective {
+queryParam = input('myapp');
+
 onClickEvent(event:MouseEvent) {
     const confimred=window.confirm("Sure to leave?")
     if (confimred) {
-        return;
+        const address = (event.target as HTMLAnchorElement).href;
+        (event.target as HTMLAnchorElement).href = address + '?from' + this.queryParam();
     }else {
         event?.preventDefault();
     }
