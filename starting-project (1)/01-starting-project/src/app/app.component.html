@@ -4,4 +4,10 @@
   <hr />
 
   <app-auth />
+
+  @if (isAdmin()) {
+    <p> admin</p>
+  }@else {
+    <p>see nothing</p>
+  }
 </main>
