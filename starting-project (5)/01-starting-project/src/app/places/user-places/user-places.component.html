@@ -1,3 +1,7 @@
 <app-places-container title="Your Favorite Places">
-  <p>Todo...</p>
+  @if (places().length > 0) {
+    <app-places [places]="places()"></app-places>
+  } @else {
+    <p class="fallback-text">Select a place from Available Places to add it to favorites.</p>
+  }
 </app-places-container>
