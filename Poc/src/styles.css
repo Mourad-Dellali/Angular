@@ -1,0 +1,47 @@
+.app-snackbar-error .mdc-snackbar__surface {
+  border: 1px solid #fecaca !important;
+  background: #fef2f2 !important;
+  color: #991b1b !important;
+  border-radius: 14px !important;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #e7e7e7;
+  height: 100%;
+}
+
+/* Force DevExtreme components to match dark bg */
+.dx-widget,
+.dx-overlay-content,
+.dx-popup-content,
+.dx-form,
+.dx-texteditor,
+.dx-texteditor-input,
+.dx-numberbox,
+.dx-datebox,
+.dx-datagrid,
+.dx-datagrid-headers,
+.dx-datagrid-rowsview {
+  background-color: #000 !important;
+  color: #e7e7e7 !important;
+}
+
+.dx-texteditor-input {
+  background-color: #141414 !important;
+  color: #e7e7e7 !important;
+}
+
+.dx-datagrid-headers {
+  background-color: #0c0c0c !important;
+  border-bottom: 1px solid #1c1c1c !important;
+}
+
+.dx-datagrid .dx-row > td {
+  border-bottom: 1px solid #151515 !important;
+}
+
+.dx-datagrid .dx-row:hover > td {
+  background-color: #0f0f0f !important;
+}
