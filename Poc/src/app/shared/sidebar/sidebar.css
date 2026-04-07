@@ -1,0 +1,58 @@
+
+.sidebar {
+  background: #111;
+  color: #fff;
+  padding: 28px 0 0 0;
+  border-right: 1px solid #222;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* remove any width, position, float */
+}
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.brand {
+  font-weight: 600;
+  font-size: 19px;
+  color: #fff;
+  line-height: 1.05;
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+.menu a {
+  display: flex;
+  align-items: center;
+  padding: 13px 24px;
+  color: #eee;
+  text-decoration: none;
+  font-size: 17px;
+  border-left: 3px solid transparent;
+  transition: background 0.10s, color 0.10s;
+}
+
+.menu .icon {
+
+  font-size: 16px;
+}
+
+.menu li.active a,
+.menu a:hover {
+  background: #232323;
+  color: #e53c2f;
+  border-left: 3px solid #e53c2f;
+}
+
