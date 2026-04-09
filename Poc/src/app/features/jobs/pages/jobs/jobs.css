@@ -1,0 +1,53 @@
+:host {
+  display: block;
+  background: #000;
+  color: #e7e7e7;
+  min-height: 100%;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.page {
+  padding: 28px 36px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0 0 22px;
+  color: #e7e7e7;
+}
+
+.table-wrap {
+  background: #050505;
+  border: 1px solid #1f1f1f;
+}
+
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 14px 10px 0;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.date-error {
+  color: #e53c2f;
+  font-size: 12px;
+  margin-top: 6px;
+}.job-link {
+  color: #e7e7e7;
+  text-decoration: none;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.job-link:hover {
+  color: #e53c2f;
+  text-decoration: none;
+}
