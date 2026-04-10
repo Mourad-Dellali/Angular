@@ -1,0 +1,86 @@
+<div class="page">
+
+  @if (loading()) {
+    <div class="loading-wrap">
+      <dx-load-indicator [visible]="true"/>
+    </div>
+  }
+
+  @if (!loading() && job()) {
+    <div class="page-header">
+      <h1 class="page-title">Détail du Job</h1>
+      <dx-button
+        icon="refresh"
+        [text]="refreshing() ? 'Actualisation...' : 'Actualiser'"
+        stylingMode="outlined"
+        [disabled]="refreshing()"
+        (onClick)="refresh()"/>
+    </div>
+
+    <div class="info-cards">
+      <div class="info-card">
+        <span class="info-label">ID</span>
+        <span class="info-value mono">{{ job()!.id }}</span>
+      </div>
+      <div class="info-card">
+        <span class="info-label">Status</span>
+        <span class="info-value" [class]="'status--' + job()!.status.toLowerCase()">
+          {{ job()!.status }}
+        </span>
+      </div>
+      <div class="info-card">
+        <span class="info-label">Créé le</span>
+        <span class="info-value">{{ job()!.createdAt | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <dx-data-grid
+        [dataSource]="chequesWithOcr()"
+        keyExpr="id"
+        [showBorders]="false"
+        [showRowLines]="true"
+        [masterDetail]="{ enabled: isCompleted(), template: 'ocrDetail' }">
+
+        <dxi-column dataField="number"           caption="Numéro"/>
+        <dxi-column dataField="montant"          caption="Montant"/>
+        <dxi-column dataField="dateCheque"       caption="Date Chèque"  dataType="date"/>
+        <dxi-column dataField="dateCompensation" caption="Compensation" dataType="date"/>
+        <dxi-column dataField="checkType"        caption="Type"/>
+        <dxi-column dataField="createdAt"        caption="Créé le"      dataType="datetime" format="shortDateShortTime"/>
+
+        <div *dxTemplate="let detail of 'ocrDetail'">
+          @if (detail.data.ocr) {
+            <div class="ocr-detail">
+              <div class="ocr-row">
+                <span class="ocr-label">Montant extrait</span>
+                <span class="ocr-value">{{ detail.data.ocr.extractedAmount }}</span>
+              </div>
+              <div class="ocr-row">
+                <span class="ocr-label">Date extraite</span>
+                <span class="ocr-value">{{ detail.data.ocr.extractedDate }}</span>
+              </div>
+              <div class="ocr-row">
+                <span class="ocr-label">Confiance</span>
+                <span class="ocr-value">{{ detail.data.ocr.confidence | number:'1.1-1' }}%</span>
+              </div>
+              <div class="ocr-row">
+                <span class="ocr-label">Texte brut</span>
+                <span class="ocr-value mono">{{ detail.data.ocr.rawText }}</span>
+              </div>
+            </div>
+          } @else {
+            <div class="ocr-pending">Aucun résultat OCR disponible.</div>
+          }
+        </div>
+
+      </dx-data-grid>
+    </div>
+
+    @if (!isCompleted()) {
+      <div class="ocr-pending-notice">
+        Les résultats OCR seront disponibles une fois le job terminé.
+      </div>
+    }
+  }
+</div>
