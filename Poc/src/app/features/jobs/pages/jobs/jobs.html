@@ -1,5 +1,5 @@
 <div class="page">
-  <h1 class="page-title">Jobs</h1>
+  <h1 class="page-title">Traitements</h1>
 
   <dx-form
     [formData]="filters"
@@ -8,17 +8,17 @@
 
     <dxi-item dataField="from" editorType="dxDateBox"
       [editorOptions]="{ type: 'datetime', displayFormat: 'yyyy-MM-dd HH:mm', width: '100%' }">
-      <dxo-label text="De"/>
+      <dxo-label text="Du"/>
     </dxi-item>
 
     <dxi-item dataField="to" editorType="dxDateBox"
       [editorOptions]="{ type: 'datetime', displayFormat: 'yyyy-MM-dd HH:mm', width: '100%' }">
-      <dxo-label text="À"/>
+      <dxo-label text="Au"/>
     </dxi-item>
 
     <dxi-item dataField="pageSize" editorType="dxNumberBox"
       [editorOptions]="{ min: 1, max: 200, showSpinButtons: true, width: '100%' }">
-      <dxo-label text="Page Size"/>
+      <dxo-label text="Taille de page"/>
       <dxi-validation-rule type="range" [min]="1" [max]="200"/>
     </dxi-item>
 
@@ -30,7 +30,9 @@
   </dx-form>
 
   @if (dateRangeError) {
-    <div class="date-error">De doit être avant ou égale à À.</div>
+    <div class="date-error">
+      La date de début doit être antérieure ou égale à la date de fin.
+    </div>
   }
 
   <div class="toolbar">
@@ -45,12 +47,21 @@
       [showRowLines]="true"
       [rowAlternationEnabled]="false">
 
-      <dxi-column dataField="id" caption="ID" cellTemplate="idTemplate"/>
-      <dxi-column dataField="status"    caption="Status"/>
+      <dxo-paging [enabled]="false"/>
+      <dxo-pager [visible]="false"/>
+
+      <dxi-column dataField="id" caption="Référence" cellTemplate="idTemplate"/>
+      <dxi-column dataField="status" caption="Statut" cellTemplate="statusTemplate"/>
       <dxi-column dataField="createdAt" caption="Créé le" dataType="datetime" format="yyyy-MM-dd HH:mm:ss"/>
 
       <div *dxTemplate="let cell of 'idTemplate'">
         <a [routerLink]="['/jobs', cell.value]" class="job-link">{{ cell.value }}</a>
+      </div>
+
+      <div *dxTemplate="let cell of 'statusTemplate'">
+        <span [class]="'status--' + cell.value.toLowerCase()">
+          {{ statusLabel(cell.value) }}
+        </span>
       </div>
 
     </dx-data-grid>

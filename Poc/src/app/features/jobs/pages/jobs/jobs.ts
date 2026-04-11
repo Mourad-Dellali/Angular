@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit, signal, computed } from '@angular
 import { finalize, Subject, takeUntil } from 'rxjs';
 import { DxFormModule, DxButtonModule, DxDataGridModule, DxLoadIndicatorModule } from 'devextreme-angular';
 import { JobsService } from '../../services/jobs.service';
-import { JobDto } from '../../models/job.dto';
+import { JOB_STATUS_LABELS, JobDto } from '../../models/job.dto';
 import { CursorPageModel } from '../../../../shared/models/cursor-page.model';
 import { RouterLink } from '@angular/router';
 
@@ -27,6 +27,9 @@ export class JobsPage implements OnInit, OnDestroy {
     to:   null as string | null,
     pageSize: 20,
   };
+  statusLabel(status: string): string {
+  return JOB_STATUS_LABELS[status] ?? status;
+}
 
   dateRangeError = false;
 

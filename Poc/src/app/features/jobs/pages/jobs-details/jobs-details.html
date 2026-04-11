@@ -8,7 +8,7 @@
 
   @if (!loading() && job()) {
     <div class="page-header">
-      <h1 class="page-title">Détail du Job</h1>
+      <h1 class="page-title">Détail du traitement</h1>
       <dx-button
         icon="refresh"
         [text]="refreshing() ? 'Actualisation...' : 'Actualiser'"
@@ -19,13 +19,13 @@
 
     <div class="info-cards">
       <div class="info-card">
-        <span class="info-label">ID</span>
+        <span class="info-label">Référence</span>
         <span class="info-value mono">{{ job()!.id }}</span>
       </div>
       <div class="info-card">
-        <span class="info-label">Status</span>
+        <span class="info-label">Statut</span>
         <span class="info-value" [class]="'status--' + job()!.status.toLowerCase()">
-          {{ job()!.status }}
+          {{ statusLabel(job()!.status) }}
         </span>
       </div>
       <div class="info-card">
@@ -44,10 +44,14 @@
 
         <dxi-column dataField="number"           caption="Numéro"/>
         <dxi-column dataField="montant"          caption="Montant"/>
-        <dxi-column dataField="dateCheque"       caption="Date Chèque"  dataType="date"/>
+        <dxi-column dataField="dateCheque"       caption="Date chèque"  dataType="date"/>
         <dxi-column dataField="dateCompensation" caption="Compensation" dataType="date"/>
-        <dxi-column dataField="checkType"        caption="Type"/>
-        <dxi-column dataField="createdAt"        caption="Créé le"      dataType="datetime" format="shortDateShortTime"/>
+        <dxi-column dataField="checkType"        caption="Type" cellTemplate="typeTemplate"/>
+        <dxi-column dataField="createdAt"        caption="Créé le" dataType="datetime" format="shortDateShortTime"/>
+
+        <div *dxTemplate="let cell of 'typeTemplate'">
+          {{ checkTypeLabel(cell.value) }}
+        </div>
 
         <div *dxTemplate="let detail of 'ocrDetail'">
           @if (detail.data.ocr) {
@@ -79,7 +83,7 @@
 
     @if (!isCompleted()) {
       <div class="ocr-pending-notice">
-        Les résultats OCR seront disponibles une fois le job terminé.
+        Les résultats OCR seront disponibles une fois le traitement terminé.
       </div>
     }
   }

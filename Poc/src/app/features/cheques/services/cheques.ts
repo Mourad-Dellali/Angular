@@ -23,6 +23,8 @@ private readonly apiUrl = `${environment.apiBaseUrl}/api/Cheques`;
     if (query.to) params = params.set('to', query.to);
     if (query.cursor) params = params.set('cursor', query.cursor);
     if (query.cursorId) params = params.set('cursorId', query.cursorId);
+    if (query.checkType !== null && query.checkType !== undefined)
+  params = params.set('checkType', String(query.checkType));
     params = params.set('pageSize', String(query.pageSize ?? 20));
 
     return this.http.get<CursorPageModel<ChequeDto>>(this.apiUrl, { params });

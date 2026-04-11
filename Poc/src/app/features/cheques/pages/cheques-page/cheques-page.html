@@ -1,80 +1,93 @@
 <div class="page">
   <h1 class="page-title">Chèques</h1>
 
-  <!-- Filters -->
   <dx-form
     [formData]="filters"
-    [colCount]="4"
+    [colCount]="5"
     (onFieldDataChanged)="onFieldChanged($event)">
 
     <dxi-item dataField="from" editorType="dxDateBox"
-      [editorOptions]="{ type: 'datetime', displayFormat: 'yyyy-MM-dd HH:mm', width: '100%' }">
-      <dxo-label text="From"/>
+      [editorOptions]="{ type: 'date', displayFormat: 'yyyy-MM-dd', width: '100%' }">
+      <dxo-label text="Du"/>
     </dxi-item>
 
     <dxi-item dataField="to" editorType="dxDateBox"
-      [editorOptions]="{ type: 'datetime', displayFormat: 'yyyy-MM-dd HH:mm', width: '100%' }">
-      <dxo-label text="To"/>
+      [editorOptions]="{ type: 'date', displayFormat: 'yyyy-MM-dd', width: '100%' }">
+      <dxo-label text="Au"/>
     </dxi-item>
 
     <dxi-item dataField="pageSize" editorType="dxNumberBox"
       [editorOptions]="{ min: 1, max: 200, showSpinButtons: true, width: '100%' }">
-      <dxo-label text="Page Size"/>
+      <dxo-label text="Taille de page"/>
       <dxi-validation-rule type="range" [min]="1" [max]="200"/>
     </dxi-item>
 
+    <dxi-item dataField="checkType" editorType="dxSelectBox"
+      [editorOptions]="{
+        dataSource: checkTypeOptions,
+        displayExpr: 'label',
+        valueExpr: 'id',
+        placeholder: 'Tous',
+        showClearButton: true,
+        width: '100%'
+      }">
+      <dxo-label text="Type"/>
+    </dxi-item>
+
     <dxi-item itemType="button"
-      [buttonOptions]="{ text: 'Apply', type: 'default', stylingMode: 'contained',
+      [buttonOptions]="{ text: 'Rechercher', type: 'default', stylingMode: 'contained',
         disabled: loading() || dateRangeError, onClick: loadFirstPage.bind(this) }">
     </dxi-item>
 
   </dx-form>
-@if(dateRangeError) {
-  <div  class="date-error">
-    From date must be before or equal to To date.
-  </div>
-}
 
-  <!-- Create Job -->
+  @if (dateRangeError) {
+    <div class="date-error">
+      La date de début doit être antérieure ou égale à la date de fin.
+    </div>
+  }
+
   <div class="toolbar">
     <dx-button
-      [text]="creatingJob() ? 'Creating...' : 'Create Job'"
+      [text]="creatingJob() ? 'Création en cours...' : 'Créer un traitement'"
       type="success"
       stylingMode="contained"
       [disabled]="creatingJob() || loading() || selectedCount() === 0"
       (onClick)="createJobFromSelection()"/>
-
     <dx-load-indicator [visible]="loading()"/>
   </div>
 
-  <!-- Grid -->
   <div class="table-wrap">
     <dx-data-grid
       [dataSource]="cheques()"
       keyExpr="id"
-      [showBorders]="false"
+      [showBorders]="true"
       [showRowLines]="true"
       [rowAlternationEnabled]="false"
       [selection]="{ mode: 'multiple', showCheckBoxesMode: 'always' }"
       (onSelectionChanged)="onSelectionChanged($event)">
 
+      <dxo-paging [enabled]="false"/>
+      <dxo-pager [visible]="false"/>
+
       <dxi-column type="selection" width="44"/>
-      <dxi-column dataField="number"          caption="Number"/>
-      <dxi-column dataField="montant"         caption="Montant"/>
-      <dxi-column dataField="dateCheque"      caption="Date Chèque"  dataType="date"/>
-      <dxi-column dataField="dateCompensation" caption="Compensation" dataType="date"/>
-      <dxi-column dataField="checkType"       caption="Type"/>
-      <dxi-column dataField="createdAt"       caption="Created At"   dataType="datetime" format="shortDateShortTime"/>
+      <dxi-column dataField="number"           caption="Numéro"/>
+      <dxi-column dataField="montant"          caption="Montant"/>
+      <dxi-column dataField="dateCheque"       caption="Date chèque"   dataType="date"/>
+      <dxi-column dataField="dateCompensation" caption="Compensation"  dataType="date"/>
+      <dxi-column dataField="checkType"        caption="Type">
+        <dxo-lookup [dataSource]="checkTypeOptions" valueExpr="id" displayExpr="label"/>
+      </dxi-column>
+      <dxi-column dataField="createdAt" caption="Créé le" dataType="datetime" format="shortDateShortTime"/>
 
     </dx-data-grid>
   </div>
 
-  <!-- Pagination footer -->
   <div class="table-footer">
-    <span>{{ selectedCount() }} selected</span>
+    <span>{{ selectedCount() }} sélectionné(s)</span>
     <div class="pager">
       <dx-button
-        text="Next Page"
+        text="Page suivante"
         stylingMode="outlined"
         [disabled]="!hasMore() || loading()"
         (onClick)="loadNextPage()"/>

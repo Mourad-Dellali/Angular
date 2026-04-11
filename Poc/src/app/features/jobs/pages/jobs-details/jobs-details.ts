@@ -5,6 +5,8 @@ import { DxButtonModule, DxDataGridModule, DxLoadIndicatorModule } from 'devextr
 import { JobsDetailsService } from '../../services/jobs-details';
 import { JobDetailsModel } from '../../models/jobs-details.model';
 import { DatePipe, DecimalPipe } from '@angular/common';
+import { JOB_STATUS_LABELS } from '@features/jobs/models/job.dto';
+import { CHECK_TYPE_LABELS } from '@features/cheques/models/cheque.dto';
 
 @Component({
   selector: 'app-job-details',
@@ -39,6 +41,13 @@ export class JobDetailsPage implements OnInit, OnDestroy {
       if (this.jobId) this.loadDetails();
     });
   }
+  statusLabel(status: string): string {
+  return JOB_STATUS_LABELS[status] ?? status;
+}
+
+checkTypeLabel(value: number): string {
+  return CHECK_TYPE_LABELS.find(t => t.id === value)?.label ?? String(value);
+}
 
   loadDetails(): void {
     this.loading.set(true);

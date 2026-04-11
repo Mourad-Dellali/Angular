@@ -3,7 +3,9 @@ import { finalize, Subject, takeUntil } from 'rxjs';
 import { DxFormModule, DxButtonModule, DxDataGridModule, DxDataGridComponent, DxLoadIndicatorModule } from 'devextreme-angular';
 import { ChequesService } from '../../services/cheques';
 import { JobService } from '../../services/job';
-import { ChequeDto } from '../../models/cheque.dto';
+import { CHECK_TYPE_LABELS, ChequeDto } from '../../models/cheque.dto';
+import { NotificationService } from '@core/services/notification.service';
+
 @Component({
   selector: 'app-cheques-page',
   imports: [DxFormModule, DxButtonModule, DxDataGridModule, DxLoadIndicatorModule],
@@ -11,7 +13,11 @@ import { ChequeDto } from '../../models/cheque.dto';
   styleUrl: './cheques-page.css',
 })
 export class ChequesPage implements OnInit, OnDestroy {
-  @ViewChild(DxDataGridComponent) grid!: DxDataGridComponent;
+  @ViewChild(DxDataGridComponent) grid!: DxDataGridComponent
+
+  private readonly notify = inject(NotificationService);
+
+  readonly checkTypeOptions = CHECK_TYPE_LABELS;
 
   private readonly destroy$ = new Subject<void>();
   private readonly chequesService = inject(ChequesService);
@@ -31,6 +37,7 @@ export class ChequesPage implements OnInit, OnDestroy {
     from: null as string | null,
     to: null as string | null,
     pageSize: 20,
+    checkType: null as number | null,
   };
   dateRangeError = false;
 
@@ -51,57 +58,44 @@ export class ChequesPage implements OnInit, OnDestroy {
     return Number.isNaN(d.getTime()) ? null : d.toISOString();
   }
 
-  loadFirstPage(): void {
-    if (this.dateRangeError) return;
-    this.loading.set(true);
-    this.chequesService.getCheques({
-      from: this.toIsoOrNull(this.filters.from),
-      to: this.toIsoOrNull(this.filters.to),
-      pageSize: this.filters.pageSize,
-      cursor: null,
-      cursorId: null,
-    })
-    .pipe(finalize(() => this.loading.set(false)), takeUntil(this.destroy$))
-    .subscribe({
-      next: res => {
-        this.cheques.set(res.items);
-        this.nextCursor.set(res.nextCursor);
-        this.nextCursorId.set(res.nextCursorId);
-        this.hasMore.set(res.hasNextPage);
-        // clear grid selection on new load
-        this.grid?.instance.clearSelection();
-      },
-      error: err => console.error(err),
-    });
-  }
+  private fetch(cursor: string | null, cursorId: string | null): void {
+  this.loading.set(true);
+  this.chequesService.getCheques({
+    from: this.toIsoOrNull(this.filters.from),
+    to: this.toIsoOrNull(this.filters.to),
+    pageSize: this.filters.pageSize,
+    checkType: this.filters.checkType,
+    cursor,
+    cursorId,
+  })
+  .pipe(finalize(() => this.loading.set(false)), takeUntil(this.destroy$))
+  .subscribe({
+    next: res => {
+      this.cheques.set(res.items);
+      this.nextCursor.set(res.nextCursor);
+      this.nextCursorId.set(res.nextCursorId);
+      this.hasMore.set(res.hasNextPage);
+      if (!cursor) this.grid?.instance.clearSelection();
+    },
+    error: err => console.error(err),
+  });
+}
 
-  loadNextPage(): void {
-    if (this.dateRangeError) return;
-    const cursor   = this.nextCursor();
-    const cursorId = this.nextCursorId();
-    if (!cursor || !cursorId) return;
+loadFirstPage(): void {
+  if (this.dateRangeError) return;
+  this.fetch(null, null);
+}
 
-    this.loading.set(true);
-    this.chequesService.getCheques({
-      from: this.toIsoOrNull(this.filters.from),
-      to: this.toIsoOrNull(this.filters.to),
-      pageSize: this.filters.pageSize,
-      cursor,
-      cursorId,
-    })
-    .pipe(finalize(() => this.loading.set(false)), takeUntil(this.destroy$))
-    .subscribe({
-      next: res => {
-        this.cheques.set(res.items);
-        this.nextCursor.set(res.nextCursor);
-        this.nextCursorId.set(res.nextCursorId);
-        this.hasMore.set(res.hasNextPage);
-      },
-      error: err => console.error(err),
-    });
-  }
+loadNextPage(): void {
+  if (this.dateRangeError) return;
+  const cursor   = this.nextCursor();
+  const cursorId = this.nextCursorId();
+  if (!cursor || !cursorId) return;
+  this.fetch(cursor, cursorId);
+}
 
   onSelectionChanged(e: any): void {
+    console.log('Selection changed:', e);
     this.selectedIds.set(new Set(e.selectedRowKeys));
   }
 
@@ -114,10 +108,14 @@ export class ChequesPage implements OnInit, OnDestroy {
       .pipe(finalize(() => this.creatingJob.set(false)), takeUntil(this.destroy$))
       .subscribe({
         next: res => {
-          console.log('Job created:', res.job_id);
-          this.selectedIds.set(new Set());
-          this.grid?.instance.clearSelection();
-        },
+        this.selectedIds.set(new Set());
+        this.grid?.instance.clearSelection();
+        this.notify.successWithLink(
+  `Traitement créé avec succès`,
+  'Voir le traitement',
+  ['/jobs', res.job_id]
+);
+      },
         error: err => console.error(err),
       });
   }

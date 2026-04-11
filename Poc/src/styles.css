@@ -45,3 +45,27 @@ html, body {
 .dx-datagrid .dx-row:hover > td {
   background-color: #0f0f0f !important;
 }
+
+.app-snackbar-success {
+  background-color: #1b3a1b;
+  color: #4caf50;
+  border-left: 3px solid #4caf50;
+}
+
+.app-snackbar-success .mat-mdc-snack-bar-action {
+  color: #4caf50;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.app-snackbar-error {
+  background-color: #3a1b1b;
+  color: #e53c2f;
+  border-left: 3px solid #e53c2f;
+}
+
+.app-snackbar-error .mat-mdc-snack-bar-action {
+  color: #e53c2f;
+  font-weight: 600;
+}

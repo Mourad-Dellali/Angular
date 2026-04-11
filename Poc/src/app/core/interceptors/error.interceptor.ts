@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, throwError } from 'rxjs';
+import { NotificationService } from '@core/services/notification.service';
 
 type BackendErrorItem = {
   code: string;
@@ -29,7 +29,7 @@ export type AppHttpError = {
 };
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const snackBar = inject(MatSnackBar);
+  const notify = inject(NotificationService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -52,9 +52,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         raw: error.error,
       });
 
-      snackBar.open(message, 'Dismiss', {
-        panelClass: ['app-snackbar-error'],
-      });
+      notify.error(message);
 
       const appError: AppHttpError = {
         status,
@@ -71,27 +69,27 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 };
 
 function resolveMessage(status: number, p: BackendProblemDetails): string {
-  if (status === 0) return 'Network error. Please check your connection.';
+  if (status === 0)   return 'Erreur réseau. Veuillez vérifier votre connexion.';
   if (p.detail?.trim()) return p.detail;
 
   const firstBackendError = p.extensions?.errors?.[0]?.description;
   if (firstBackendError) return firstBackendError;
 
-  if (status >= 500) return 'Server error. Please try again later.';
-  if (status === 404) return 'Resource not found.';
-  if (status === 401) return 'Unauthorized.';
-  if (status === 403) return 'Forbidden.';
-  if (status === 409) return 'Conflict occurred.';
-  if (status === 400) return 'Validation error.';
-  return 'Unexpected error occurred.';
+  if (status >= 500) return 'Erreur serveur. Veuillez réessayer plus tard.';
+  if (status === 404) return 'Ressource introuvable.';
+  if (status === 401) return 'Non autorisé.';
+  if (status === 403) return 'Accès refusé.';
+  if (status === 409) return 'Conflit détecté.';
+  if (status === 400) return 'Erreur de validation.';
+  return 'Une erreur inattendue est survenue.';
 }
 
 function defaultTitle(status: number): string {
-  if (status >= 500) return 'Internal Server Error';
-  if (status === 404) return 'Resource Not Found';
-  if (status === 401) return 'Unauthorized';
-  if (status === 403) return 'Forbidden';
-  if (status === 409) return 'Conflict';
-  if (status === 400) return 'Validation Error';
-  return 'Error';
+  if (status >= 500) return 'Erreur serveur';
+  if (status === 404) return 'Ressource introuvable';
+  if (status === 401) return 'Non autorisé';
+  if (status === 403) return 'Accès refusé';
+  if (status === 409) return 'Conflit';
+  if (status === 400) return 'Erreur de validation';
+  return 'Erreur';
 }

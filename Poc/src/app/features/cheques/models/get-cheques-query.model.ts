@@ -4,4 +4,5 @@ export interface GetChequesQueryModel {
   cursor?: string | null;    // ISO datetime
   cursorId?: string | null;  // Guid
   pageSize?: number;
+  checkType?: number | null;
 }
